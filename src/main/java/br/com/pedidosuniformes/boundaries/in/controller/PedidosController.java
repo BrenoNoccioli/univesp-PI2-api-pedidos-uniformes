@@ -2,39 +2,49 @@ package br.com.pedidosuniformes.boundaries.in.controller;
 
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoResponse;
+import br.com.pedidosuniformes.services.PedidosService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
+@AllArgsConstructor
 @RestController
 @RequestMapping("/pedidos")
 public class PedidosController {
 
+    private final PedidosService service;
+
     @PostMapping
     public ResponseEntity<PedidoResponse> criarPedido(@RequestBody PedidoRequest pedidoRequest) {
+        PedidoResponse response = service.postPedido(pedidoRequest);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> obterTodosPedidos() {
+        List<PedidoResponse> response = service.getAllPedidos();
 
-        return null;
+        return ResponseEntity.ok(response);
     }
 
-    // Método GET para obter um pedido por ID
     @GetMapping("/{pedidoId}")
     public ResponseEntity<PedidoResponse> obterPedidoPorId(@PathVariable Long pedidoId) {
-
-        return null;
+        PedidoResponse response = service.findPedidoById(pedidoId);
+        return ResponseEntity.ok(response);
     }
 
-    // Método PATCH para atualizar parcialmente um pedido
+
     @PatchMapping("/{pedidoId}")
-    public ResponseEntity<PedidoResponse> atualizarPedidoParcial(@PathVariable Long id,
-                                                                 @RequestBody PedidoRequest pedidoRequest) {
-        return null;
+    public ResponseEntity<PedidoResponse> atualizarPedidoParcial(@PathVariable Long pedidoId,
+                                                                 @RequestBody PedidoPatchRequest pedidoRequest) {
+        PedidoResponse response = service.patchStatusPedido(pedidoId, pedidoRequest);
+        return ResponseEntity.ok(response);
     }
 
 }

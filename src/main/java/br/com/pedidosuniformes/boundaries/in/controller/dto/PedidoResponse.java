@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PedidoResponse {
     private Long pedidoId;
+
     private String nomeCliente;
 
     private String status;
