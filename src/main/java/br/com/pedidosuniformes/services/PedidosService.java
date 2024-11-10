@@ -1,6 +1,6 @@
 package br.com.pedidosuniformes.services;
 
-import br.com.pedidosuniformes.boundaries.in.controller.PedidoPatchRequest;
+import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoPatchRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoResponse;
 import br.com.pedidosuniformes.exceptions.PedidoNotFoundException;
@@ -9,7 +9,6 @@ import br.com.pedidosuniformes.models.StatusPedido;
 import br.com.pedidosuniformes.repositories.PedidosRepository;
 import br.com.pedidosuniformes.utils.mappers.PedidosMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

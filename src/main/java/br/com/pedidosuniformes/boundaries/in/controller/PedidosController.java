@@ -1,5 +1,6 @@
 package br.com.pedidosuniformes.boundaries.in.controller;
 
+import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoPatchRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoResponse;
 import br.com.pedidosuniformes.services.PedidosService;
@@ -17,10 +18,10 @@ import java.util.List;
 @RequestMapping("/pedidos")
 public class PedidosController {
 
-    private final PedidosService service;
+    private PedidosService service;
 
     @PostMapping
-    public ResponseEntity<PedidoResponse> criarPedido(@RequestBody PedidoRequest pedidoRequest) {
+    public ResponseEntity<PedidoResponse> criarPedido(@Validated @RequestBody PedidoRequest pedidoRequest) {
         PedidoResponse response = service.postPedido(pedidoRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -42,7 +43,7 @@ public class PedidosController {
 
     @PatchMapping("/{pedidoId}")
     public ResponseEntity<PedidoResponse> atualizarPedidoParcial(@PathVariable Long pedidoId,
-                                                                 @RequestBody PedidoPatchRequest pedidoRequest) {
+                                                                 @Validated @RequestBody PedidoPatchRequest pedidoRequest) {
         PedidoResponse response = service.patchStatusPedido(pedidoId, pedidoRequest);
         return ResponseEntity.ok(response);
     }

@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container{
+    background-color: red;
+}
+
+.container-fluid {
+    background-color: rgb(71, 154, 250);
+}
+
+#titulo{
+    font: white;
+}
+

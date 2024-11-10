@@ -1,6 +1,7 @@
 package br.com.pedidosuniformes.boundaries.in.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,6 @@ public class PedidoRequest {
     @NotBlank
     private String nomeCliente;
 
-    @NotBlank
+    @NotEmpty
     private List<UniformeRequest> uniformes;
 }

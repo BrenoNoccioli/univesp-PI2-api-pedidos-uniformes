@@ -4,49 +4,58 @@ import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.PedidoResponse;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.UniformeRequest;
 import br.com.pedidosuniformes.boundaries.in.controller.dto.UniformeResponse;
-import br.com.pedidosuniformes.models.GeneroUniforme;
-import br.com.pedidosuniformes.models.Pedido;
-import br.com.pedidosuniformes.models.StatusPedido;
-import br.com.pedidosuniformes.models.Uniforme;
-import org.mapstruct.IterableMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import br.com.pedidosuniformes.models.*;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper
-public interface PedidosMapper {
+@Component
+public class PedidosMapper {
 
-    @Mapping(source = "uniformes", target = "uniforme", qualifiedByName = "uniformeRequestToEntityList")
-    @Mapping(target = "status", defaultValue = "StatusPedido.RECEBIDO")
-    @Mapping(target = "dataAbertura", defaultValue = "LocalDate.now()")
-    Pedido requestToEntity(PedidoRequest request);
+    public Pedido requestToEntity(PedidoRequest request){
+        return Pedido.builder()
+                .nomeCliente(request.getNomeCliente())
+                .status(StatusPedido.RECEBIDO)
+                .uniformes(uniformeRequestToEntityList(request.getUniformes()))
+                .dataAbertura(LocalDate.now())
+                .build();
+    }
 
-    @Named("entityToResponse")
-    @Mapping(source = "uniformes", target = "uniformes", qualifiedByName = "uniformeEntityToResponseList")
-    @Mapping(target = "status", expression = "java(entity.getStatus().name())")
-    @Mapping(target = "dataAbertura", expression = "java(String.valueOf(entity.getDataAbertura()))")
-    PedidoResponse entityToResponse(Pedido entity);
+    public PedidoResponse entityToResponse(Pedido entity){
+        return PedidoResponse.builder()
+                .pedidoId(entity.getPedidoId())
+                .nomeCliente(entity.getNomeCliente())
+                .status(entity.getStatus().name())
+                .uniformes(uniformeEntityToResponseList(entity.getUniformes()))
+                .dataAbertura(String.valueOf(entity.getDataAbertura()))
+                .build();
+    }
 
-    @IterableMapping(qualifiedByName = "entityToResponse")
-    List<PedidoResponse> entityToResponseList(List<Pedido> entities);
+    public List<PedidoResponse> entityToResponseList(List<Pedido> entities){
+        return entities.stream().map(this::entityToResponse).collect(Collectors.toList());
+    }
 
-    @Named("uniformeRequestToEntityList")
-    @IterableMapping(qualifiedByName = "uniformeRequestToEntity")
-    List<Uniforme> uniformeRequestToEntityList(List<UniformeRequest> requests);
+    public List<Uniforme> uniformeRequestToEntityList(List<UniformeRequest> requests){
+        return requests.stream().map(this::uniformeRequestToEntity).collect(Collectors.toList());
+    }
 
-    @Named("uniformeEntityToResponseList")
-    @IterableMapping(qualifiedByName = "uniformeEntityToResponse")
-    List<UniformeResponse> uniformeEntityToResponseList(List<Uniforme> entities);
+    public List<UniformeResponse> uniformeEntityToResponseList(List<Uniforme> entities){
+        return entities.stream().map(this::uniformeEntityToResponse).collect(Collectors.toList());
+    }
 
-    @Named("uniformeRequestToEntity")
-    @Mapping(target = "genero", expression = "java(GeneroUniforme.valueOf(request.getGenero()))")
-    @Mapping(target = "tamanho", expression = "java(TamanhoUniforme.valueOf(request.getTamanho()))")
-    Uniforme uniformeRequestToEntity(UniformeRequest request);
+    public Uniforme uniformeRequestToEntity(UniformeRequest request){
+        return new Uniforme(GeneroUniforme.valueOf(request.getGenero()),
+                TamanhoUniforme.valueOf(request.getTamanho()),
+                request.getQuantidade());
+    }
 
-    @Named("uniformeEntityToResponse")
-    @Mapping(target = "genero", expression = "java(entity.getGenero().name())")
-    @Mapping(target = "tamanho", expression = "java(entity.getTamanho().name())")
-    UniformeResponse uniformeEntityToResponse(Uniforme entity);
+    public UniformeResponse uniformeEntityToResponse(Uniforme entity){
+        return UniformeResponse.builder()
+                .genero(entity.getGenero().name())
+                .tamanho(entity.getTamanho().name())
+                .quantidade(entity.getQuantidade())
+                .build();
+    }
 }
